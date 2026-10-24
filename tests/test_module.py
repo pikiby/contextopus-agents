@@ -145,7 +145,7 @@ def test_main_rules_external_edit_and_broken_reference_fail_closed(app, tmp_path
     initial = app.query('agents.instructions_read')
     saved = app.execute('agents.instructions_save', {'content': 'Original rules', 'expected_revision': initial['revision']})
     target = Path(saved['path'])
-    target.write_text(target.read_text().replace('Original rules', 'External rules'))
+    target.write_text(target.read_text().replace('Original rules', 'External rules'), encoding="utf-8", newline="")
     current = app.query('agents.instructions_read')
     assert current['content'] == 'External rules' and current['revision'] != saved['revision']
     with pytest.raises(Exception, match='revision'):
@@ -155,7 +155,7 @@ def test_main_rules_external_edit_and_broken_reference_fail_closed(app, tmp_path
     target.rename(target.with_name('renamed-rules.md'))
     # Stable Core instruction ID is still agents-main, so replace the reference
     # with an actual path to exercise a broken file wikilink explicitly.
-    reference.write_text(reference.read_text().replace('[[agents-main]]', '[[missing-rules]]'))
+    reference.write_text(reference.read_text().replace('[[agents-main]]', '[[missing-rules]]'), encoding="utf-8", newline="")
     with pytest.raises(Exception, match='Missing or ambiguous instruction'):
         app.query('agents.instructions_read')
     assert 'missing-rules' in reference.read_text()
@@ -163,14 +163,14 @@ def test_main_rules_external_edit_and_broken_reference_fail_closed(app, tmp_path
 
 def test_legacy_rules_migration_is_explicit_and_retains_original(app, tmp_path):
     legacy = tmp_path / 'modules/agents/config/INSTRUCTIONS.md'
-    legacy.write_text('# Legacy routing\nUse reviewer only.\n')
+    legacy.write_text('# Legacy routing\nUse reviewer only.\n', encoding="utf-8", newline="")
     with pytest.raises(Exception, match='require agents.catalog_migrate'):
         app.query('agents.instructions_read')
     plan = app.query('agents.catalog_migration_plan')
     assert plan['instructions']['required']
     common = tmp_path / 'core/instructions/agents-main.md'
     assert not common.exists()
-    legacy.write_text('# Legacy routing\nUse reviewer and tester.\n')
+    legacy.write_text('# Legacy routing\nUse reviewer and tester.\n', encoding="utf-8", newline="")
     with pytest.raises(Exception, match='revision'):
         app.execute('agents.catalog_migrate', {'expected_revision':plan['revision']})
     plan = app.query('agents.catalog_migration_plan')
@@ -190,13 +190,13 @@ def test_main_rules_return_full_required_chain_and_guard_dependency_edits(app, t
     saved = app.execute('agents.instructions_save', {'content':'Primary rules', 'expected_revision':initial['revision']})
     primary = Path(saved['path'])
     dependency = primary.parent / 'required-safety.md'
-    dependency.write_text('---\nid: required-safety\ntype: instruction\ntitle: Required safety\n---\nRead this entire required instruction.\n')
-    primary.write_text(primary.read_text().replace('type: instruction\n', 'type: instruction\ninstructions:\n  safety: "[[required-safety]]"\n'))
+    dependency.write_text('---\nid: required-safety\ntype: instruction\ntitle: Required safety\n---\nRead this entire required instruction.\n', encoding="utf-8", newline="")
+    primary.write_text(primary.read_text().replace('type: instruction\n', 'type: instruction\ninstructions:\n  safety: "[[required-safety]]"\n'), encoding="utf-8", newline="")
     current = app.query('agents.instructions_read')
     assert [document['id'] for document in current['documents']] == ['required-safety']
     assert current['documents'][0]['content'] == 'Read this entire required instruction.\n'
     assert current['content'] == 'Primary rules' and current['required_revision']
-    dependency.write_text(dependency.read_text().replace('entire required instruction', 'new complete required instruction'))
+    dependency.write_text(dependency.read_text().replace('entire required instruction', 'new complete required instruction'), encoding="utf-8", newline="")
     changed = app.query('agents.instructions_read')
     assert changed['document_revision'] == current['document_revision']
     assert changed['required_revision'] != current['required_revision'] and changed['revision'] != current['revision']

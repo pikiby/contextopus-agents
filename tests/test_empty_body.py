@@ -13,7 +13,7 @@ def settle(catalog):
 
 
 @pytest.mark.parametrize('kind', ['profile', 'team'])
-@pytest.mark.parametrize('instructions', [None, '\n \t'])
+@pytest.mark.parametrize('instructions', [None, '\n \t', '\r\n \t'])
 def test_empty_body_discovery_and_metadata_edits_reembed_without_source_rewrite(catalog, monkeypatch, kind, instructions):
     captured = []
     def strict(self, texts, purpose='document'):
@@ -44,7 +44,7 @@ def test_empty_body_discovery_and_metadata_edits_reembed_without_source_rewrite(
     previous = vector_revision()
     for old,new in [('title: Purpose only','title: Renamed purpose'),
                     ('description: Discover this role','description: New discovery purpose')]:
-        path.write_text(path.read_text().replace(old,new))
+        path.write_bytes(path.read_bytes().decode("utf-8").replace(old,new).encode("utf-8"))
         changed = path.read_bytes()
         read = catalog.read('empty')
         expected = read['title'] + '\n' + read['description']
