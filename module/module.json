@@ -1,0 +1,375 @@
+{
+  "id": "agents",
+  "version": "0.3.0",
+  "core_requires": ">=1.6,<2",
+  "rag": true,
+  "service": {
+    "factory": "worker.py:create_service",
+    "ready_timeout": 15,
+    "stop_timeout": 40
+  },
+  "storage": {
+    "engine": "sqlite",
+    "schema_version": 1,
+    "migrations": "migrations",
+    "compatible_versions": {
+      "min": 1,
+      "max": 1
+    }
+  },
+  "procedures": "procedures",
+  "skills": "skills",
+  "operations": [
+    {
+      "name": "agents.library",
+      "kind": "query",
+      "description": "Browse authoritative profiles and teams without launching agents.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "enum": [
+              "collections",
+              "records",
+              "record"
+            ]
+          },
+          "collection": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "text",
+              "semantic"
+            ]
+          },
+          "type": {
+            "type": "string"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.status",
+      "kind": "query",
+      "description": "Inspect catalog workers, source errors and pending RAG jobs.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.instructions_read",
+      "kind": "query",
+      "description": "Read the complete user instruction for the main agent; keep it separate from profiles and procedures.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.instructions_save",
+      "kind": "execute",
+      "description": "Save explicitly requested main-agent instructions after showing the actual text; expected revision protects concurrent edits.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "maxLength": 262144
+          },
+          "expected_revision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "content",
+          "expected_revision"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.team_read",
+      "kind": "query",
+      "description": "Read a team and its member purposes before choosing a role; does not launch agents.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "team": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "team"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.record_save",
+      "kind": "execute",
+      "description": "Save a profile or team at its expected revision; writes authoritative Markdown; SQL and shared RAG with derived discovery text are derived asynchronously.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "record": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "kind": {
+                "enum": [
+                  "profile",
+                  "team"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "body": {
+                "type": "object",
+                "maxProperties": 8
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "title",
+              "description",
+              "body"
+            ],
+            "additionalProperties": false
+          },
+          "expected_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "record"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.profile_delete",
+      "kind": "execute",
+      "description": "Delete an unreferenced source profile and shared RAG at the expected full-file revision. Native definitions are managed through agents/install.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expected_revision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "id",
+          "expected_revision"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.catalog_migration_plan",
+      "kind": "query",
+      "description": "Inspect explicit legacy SQL/config migration without writing source files.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.catalog_migrate",
+      "kind": "execute",
+      "description": "Export legacy catalog SQL to Markdown and legacy rules to Core instructions; retain legacy backup. Never runs on startup.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "expected_revision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "expected_revision"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.read",
+      "kind": "query",
+      "description": "Read the complete current profile or team.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.list",
+      "kind": "query",
+      "description": "List catalog descriptions without loading full profiles.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "profile",
+              "team"
+            ]
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.search",
+      "kind": "query",
+      "description": "Semantic discovery using inherited Core selection and diagnostics. Read selected IDs before use.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32768
+          },
+          "kind": {
+            "enum": [
+              "profile",
+              "team"
+            ]
+          },
+          "selection": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    },
+    {
+      "name": "agents.team_resolve",
+      "kind": "query",
+      "description": "Resolve one named role to a complete profile.",
+      "service": true,
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "team": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "team",
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "timeout": 120
+    }
+  ]
+}
