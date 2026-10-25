@@ -1,3 +1,7 @@
+---
+operations: ["agents.catalog_migrate", "agents.catalog_migration_plan", "agents.instructions_read", "agents.instructions_save"]
+---
+
 # Main-agent instructions
 
 This is the editable instruction for the main agent managing a team, not an executor
@@ -11,7 +15,7 @@ Read through agents.instructions_read. Read every complete record in documents i
 returned dependency order as well as the primary content. The primary appears only in
 content; documents contains only additional required rules. YAML instructions mappings
 require those documents; semantic search snippets are insufficient. The aggregate revision
-protects the reference, primary rules and every required dependency. A simple rule can be `$a development`; the user
+protects the reference, primary rules and every required dependency. A simple rule can be `$agents development`; the user
 may instead write arbitrary routing, delegation, concurrency, interaction and acceptance
 rules. Do not require structured routing tables or software counters. Keep these rules
 separate from Workspace instructions, team instructions and participant profiles.

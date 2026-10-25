@@ -1,5 +1,5 @@
 ---
-name: a-settings
+name: agents-settings
 description: Read or change the main agent's multi-agent working instructions.
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: a-search
+name: agents-search
 description: Find and inspect agent profiles and teams without launching or changing them.
 ---
 

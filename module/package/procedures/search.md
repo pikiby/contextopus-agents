@@ -1,3 +1,7 @@
+---
+operations: ["agents.list", "agents.read", "agents.search", "agents.status", "agents.team_read"]
+---
+
 # Find and inspect agents
 
 Use agents.list for a catalog, agents.read for a known profile/team, agents.team_read for

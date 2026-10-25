@@ -1,5 +1,5 @@
 ---
-name: a-edit
+name: agents-edit
 description: Create or update reusable agent profiles and teams.
 ---
 

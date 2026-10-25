@@ -1,3 +1,7 @@
+---
+operations: ["agents.instructions_read", "agents.list", "agents.read", "agents.search", "agents.team_read", "agents.team_resolve"]
+---
+
 # Work with agent teams
 
 Read this procedure before using Agents; reuse it within the task. Use the common
@@ -8,12 +12,12 @@ is a connection failure, not permission to substitute a private catalog or guess
 
 | Request / short skill | Procedure |
 | --- | --- |
-| Use a team: `$a development` | The work sequence below |
-| Find or inspect teams/profiles: `$a-search` | agents/search |
-| Create or edit teams/profiles: `$a-edit` | agents/edit |
-| Read or change the main agent's rules: `$a-settings` | agents/instructions |
+| Use a team: `$agents development` | The work sequence below |
+| Find or inspect teams/profiles: `$agents-search` | agents/search |
+| Create or edit teams/profiles: `$agents-edit` | agents/edit |
+| Read or change the main agent's rules: `$agents-settings` | agents/instructions |
 
-Ordinary language after `$a` uses the same routing. A lookup does not authorize launch;
+Ordinary language after `$agents` uses the same routing. A lookup does not authorize launch;
 a team name alone selects that team and does not launch every member or invent a task.
 
 ## Main-agent work sequence
@@ -23,10 +27,10 @@ a team name alone selects that team and does not launch every member or invent a
    Reuse it during the same task; reread for a new task, changed rules or lost text. These
    user rules define team selection, routing, invocation/concurrency limits, coordination
    and result acceptance. They are separate from Workspace INSTRUCTIONS and profile/team
-   instructions. A `$a TEAM` reference inside them selects a team; it does not recursively
+   instructions. A `$agents TEAM` reference inside them selects a team; it does not recursively
    reload this skill. Do not copy the rules into Workspace or infer a default-team setting.
 2. Honor the explicit team choice; otherwise follow these rules. Use agents.list/search
-   only when discovery is needed. Resolve ambiguity before launching. For `$a development`,
+   only when discovery is needed. Resolve ambiguity before launching. For `$agents development`,
    call agents.team_read(team="development") without requiring a role in advance.
 3. Read the team's complete instructions and member purposes. Choose the appropriate role
    for the actual task according to the main-agent rules. For that role, use team_resolve

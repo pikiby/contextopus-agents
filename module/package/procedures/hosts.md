@@ -1,3 +1,7 @@
+---
+operations: []
+---
+
 # Native host references
 
 The shared lifecycle is agents/install. These references are starting points; check the

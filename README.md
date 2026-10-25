@@ -9,12 +9,12 @@ shared semantic search, and let your coding assistant use its native subagent to
 
 ## Install
 
-Requires **Contextopus Core 1.6+**. Download the
-[Agents 0.3.0 ZIP](https://github.com/pikiby/contextopus-agents/releases/download/v0.3.0/contextopus-agents-0.3.0.zip)
+Requires **Contextopus Core 1.7+**. Download the
+[Agents 0.4.0 ZIP](https://github.com/pikiby/contextopus-agents/releases/download/v0.4.0/contextopus-agents-0.4.0.zip)
 and verify it against the release's SHA256SUMS. Then run:
 
 ```console
-contextopus modules install agents --source /path/to/contextopus-agents-0.3.0.zip
+contextopus modules install agents --source /path/to/contextopus-agents-0.4.0.zip
 contextopus integrate codex --user --apply
 ```
 
@@ -24,12 +24,12 @@ instead of `modules install`. Add `--plan` to inspect installation before applyi
 Core manages the module database, background indexing and shared embedding model.
 Your profiles, teams and rules survive module updates.
 
-## Four short skills
+## Four entrypoints
 
-- **`$a development`** — use a named team for the task you actually requested.
-- **`$a-search`** — find profiles and teams by name or meaning without launching them.
-- **`$a-edit`** — create or update profiles and teams.
-- **`$a-settings`** — edit the main agent's delegation and routing rules.
+- **`$agents development`** — use a named team for the task you actually requested.
+- **`$agents-search`** — find profiles and teams by name or meaning without launching them.
+- **`$agents-edit`** — create or update profiles and teams.
+- **`$agents-settings`** — edit the main agent's delegation and routing rules.
 
 Skill invocation syntax depends on your client. Ordinary-language requests use
 the same procedures. Selecting a team does not launch every member.
@@ -51,7 +51,7 @@ its full profile. Teams link to profile files with Obsidian-style wikilinks.
 
 ### Your rules for the main agent
 
-Keep delegation rules in a separate instruction: a simple `$a development`,
+Keep delegation rules in a separate instruction: a simple `$agents development`,
 or detailed routing, concurrency limits and result-review criteria. These rules
 are read in full and reused within the task. They complement the selected
 team and executor prompts rather than replacing either.
@@ -98,3 +98,15 @@ embeddings. They do not require access to your conversations or a model API.
 ## License
 
 [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
+
+## Client delivery
+
+Core 1.7 client packages share one installer and one persistent data root.
+Skills use full canonical names under the `contextopus` plugin namespace, or a
+`contextopus-` prefix for native file delivery. Short aliases are user-selected.
+See the [client package guide](https://github.com/pikiby/contextopus-core/blob/main/docs/client-packages.md)
+for package formats, setup and verification limits.
+
+## Current release
+
+[0.4.0: Full skill names and discoverable procedures](docs/releases/0.4.0.md) · [Downloads](https://github.com/pikiby/contextopus-agents/releases/tag/v0.4.0)

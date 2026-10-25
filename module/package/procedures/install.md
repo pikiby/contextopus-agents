@@ -1,3 +1,7 @@
+---
+operations: ["agents.read", "agents.team_resolve"]
+---
+
 # Manage native profile installations
 
 This procedure is shared by every host. The main agent performs it using that host's

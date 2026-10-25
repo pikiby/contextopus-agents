@@ -1,5 +1,5 @@
 ---
-name: a
+name: agents
 description: Use an agent team; route profile discovery, editing, and delegation rules.
 ---
 

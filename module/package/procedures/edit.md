@@ -1,9 +1,27 @@
+---
+operations: ["agents.catalog_migrate", "agents.catalog_migration_plan", "agents.instructions_read", "agents.list", "agents.profile_delete", "agents.read", "agents.record_save", "agents.search", "agents.status"]
+---
+
 # Create or edit profiles and teams
 
 Read agents.instructions_read for applicable main-agent rules. Inspect the relevant catalog
 and full records before editing. Use agents.record_save: provide expected_revision for an
 existing record; omit it for a new ID. The revision protects the complete source file. Preserve unrelated rules. Show the intended changes
 and follow the user's actual request; a request to discuss a profile does not save one.
+
+Use the attached `agents.record_save` schema. Obtain `guide(operation="agents.record_save")`
+only if that definition is missing from this response. Use that schema rather than guessing fields from another
+operation or copying an entire read response. The MCP `arguments` object contains:
+
+- `record`: one object with `id`, `kind`, `title`, `description` and `body`.
+- `expected_revision`: a sibling of `record`, required for an existing record and omitted
+  or null for a new ID.
+
+For a profile, put the required `model` and optional `instructions` and `settings` inside
+`record.body`. For a team, put the required nonempty `roles` and optional `instructions`
+inside `record.body`; each role maps to an object containing `profile`, an existing profile ID.
+Do not put record fields directly in `arguments`, and do not copy read-only fields such as
+`revision` or indexing status into `record`. Do not infer or invent a model or settings.
 
 The source is data/profiles/*.md or data/teams/*.md. YAML holds stable id, type, title,
 description and model/settings or roles; the body holds complete instructions. Files have

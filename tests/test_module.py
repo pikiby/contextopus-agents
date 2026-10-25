@@ -233,3 +233,27 @@ def test_communication_is_not_exposed_or_replayed(app):
         app.execute('agents.record_save', {'record': {'id':'legacy-team','kind':'team',
             'title':'Legacy', 'description':'No session binding',
             'body':{'roles':{'worker':{'session':'old-session'}}}}})
+
+
+def test_record_save_rejects_flat_record_without_creating_it(app):
+    record = {'id': 'schema-reader', 'kind': 'profile', 'title': 'Schema reader',
+              'description': 'Read synthetic facts',
+              'body': {'model': 'local/test', 'instructions': 'Read only assigned facts'}}
+    with pytest.raises(Exception):
+        app.execute('agents.record_save', record)
+    assert not any(row['id'] == record['id'] for row in app.query('agents.list'))
+    saved = app.execute('agents.record_save', {'record': record})
+    assert saved['body'] == record['body']
+    assert app.query('agents.read', {'id': record['id']})['revision'] == saved['revision']
+
+
+def test_all_agents_procedures_bundle_registered_schemas(app):
+    for path in (ROOT / "module/package/procedures").glob("*.md"):
+        result = app.procedure("agents/" + path.stem)
+        assert "operations" in result
+        assert not result.get("unavailable_operations")
+        assert not result["content"].startswith("---")
+        for operation in result["operations"]:
+            assert operation == app.registry.describe(operation["operation"])
+    edit = app.procedure("agents/edit")
+    assert {"agents.read", "agents.list", "agents.record_save"} <= {o["operation"] for o in edit["operations"]}
