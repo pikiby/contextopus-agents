@@ -109,4 +109,4 @@ for package formats, setup and verification limits.
 
 ## Current release
 
-[0.4.0: Full skill names and discoverable procedures](docs/releases/0.4.0.md) · [Downloads](https://github.com/pikiby/contextopus-agents/releases/tag/v0.4.0)
+[0.4.0: Full skill names and discoverable procedures](https://github.com/pikiby/contextopus-agents/releases/tag/v0.4.0) · [Downloads](https://github.com/pikiby/contextopus-agents/releases/tag/v0.4.0)
