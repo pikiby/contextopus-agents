@@ -10,11 +10,11 @@ shared semantic search, and let your coding assistant use its native subagent to
 ## Install
 
 Requires **Contextopus Core 1.7+**. Download the
-[Agents 0.4.0 ZIP](https://github.com/pikiby/contextopus-agents/releases/download/v0.4.0/contextopus-agents-0.4.0.zip)
-and verify it against the release's SHA256SUMS. Then run:
+[Agents 0.5.0 ZIP](https://github.com/pikiby/contextopus-agents/releases/download/v0.5.0/contextopus-agents-0.5.0.zip).
+Then run:
 
 ```console
-contextopus modules install agents --source /path/to/contextopus-agents-0.4.0.zip
+contextopus modules install agents --source /path/to/contextopus-agents-0.5.0.zip
 contextopus integrate codex --user --apply
 ```
 
@@ -38,8 +38,9 @@ the same procedures. Selecting a team does not launch every member.
 
 A profile can be just a model, or include a complete role prompt and settings.
 For example, a Git reader can answer repository questions with a lightweight model.
-The main agent retrieves the full profile, checks the chosen client's native
-profile support, and installs or updates its native definition before use.
+The main agent retrieves the full profile and uses the current client's skills
+and native tools to create or use the agent. It decides whether that method needs
+a registered definition or supports direct profile handoff.
 Local edits are protected; unsupported model settings or required permissions
 are reported rather than silently weakened. Profiles are not an execution sandbox.
 
@@ -109,4 +110,4 @@ for package formats, setup and verification limits.
 
 ## Current release
 
-[0.4.0: Full skill names and discoverable procedures](https://github.com/pikiby/contextopus-agents/releases/tag/v0.4.0) · [Downloads](https://github.com/pikiby/contextopus-agents/releases/tag/v0.4.0)
+[0.5.0: Native profile checks and precise contracts](docs/releases/0.5.0.md) · [Downloads](https://github.com/pikiby/contextopus-agents/releases/tag/v0.5.0)

@@ -16,14 +16,24 @@ BODY = {
     'type': 'object', 'maxProperties': 8,
     'description': 'Content inside record.body. Profiles require model and allow instructions/settings; teams require roles and allow instructions.',
     'properties': {
-        'model': {'type': 'string', 'description': 'Required for a profile: the user-selected model. Located at record.body.model.'},
+        'model': {'type': 'string', 'pattern': r'\S', 'description': 'Required for a profile: the user-selected model. Located at record.body.model.'},
         'instructions': {'type': 'string', 'description': 'Optional complete executor or team instructions, at record.body.instructions.'},
         'settings': {'type': 'object', 'description': 'Optional profile settings; preserve the existing settings when updating.'},
-        'roles': {'type': 'object', 'description': 'Required for a team: nonempty mapping of role names to objects containing profile (an existing profile ID).'},
+        'roles': {'type': 'object', 'minProperties': 1,
+                  'propertyNames': {'minLength': 1},
+                  'additionalProperties': obj({'profile': {'type': 'string', 'minLength': 1}}, ['profile']),
+                  'description': 'Required for a team: nonempty mapping of role names to objects containing profile (an existing profile ID).'},
     },
+    'additionalProperties': False,
 }
 RECORD=obj({'id':ID,'kind':enum('profile','team'),'title':string(256),'description':string(2048),'body':BODY},['id','kind','title','description','body'])
 RECORD['description'] = 'Required nested record object. Put id, kind, title, description and body here, not directly in arguments. Read results include other metadata; do not copy that metadata into record.'
+RECORD['allOf'] = [
+    {'if': {'properties': {'kind': {'const': 'profile'}}, 'required': ['kind']},
+     'then': {'properties': {'body': {'required': ['model'], 'properties': {'roles': False}}}}},
+    {'if': {'properties': {'kind': {'const': 'team'}}, 'required': ['kind']},
+     'then': {'properties': {'body': {'required': ['roles'], 'properties': {'model': False, 'settings': False}}}}},
+]
 
 operations=[]
 def op(name,kind,description,properties=None,required=()):
@@ -40,6 +50,6 @@ op('catalog_migrate','execute','Export legacy catalog SQL to Markdown and legacy
 op('read','query','Read the complete current profile or team.',{'id':ID},['id'])
 op('list','query','List catalog descriptions without loading full profiles.',{'kind':enum('profile','team'),**PAGE})
 op('search','query','Semantic discovery using inherited Core selection and diagnostics. Read selected IDs before use.',{'query':TEXT,'kind':enum('profile','team'),'selection':{'type':'object'}},['query'])
-op('team_resolve','query','Resolve one named role to a complete profile.',{'team':ID,'role':ID},['team','role'])
-manifest={'id':'agents','version':'0.4.0','core_requires':'>=1.7,<2','rag':True,'service':{'factory':'worker.py:create_service','ready_timeout':15,'stop_timeout':40},'storage':{'engine':'sqlite','schema_version':1,'migrations':'migrations','compatible_versions':{'min':1,'max':1}},'procedures':'procedures','skills':'skills','operations':operations}
+op('team_resolve','query',"Resolve one named role to its full profile, team instructions and complete main-agent rules. No native registration or launch is performed; the agent chooses the current host's applicable skills and tools.",{'team':ID,'role':ID},['team','role'])
+manifest={'id':'agents','version':'0.5.0','core_requires':'>=1.7,<2','rag':True,'service':{'factory':'worker.py:create_service','ready_timeout':15,'stop_timeout':40},'storage':{'engine':'sqlite','schema_version':1,'migrations':'migrations','compatible_versions':{'min':1,'max':1}},'procedures':'procedures','skills':'skills','operations':operations}
 (ROOT/'module/module.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')

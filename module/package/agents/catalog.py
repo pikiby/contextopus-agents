@@ -424,7 +424,8 @@ class Catalog:
             raise ValueError('Unknown team role')
         if any(error['team'] == team and error['role'] == role for error in self.reference_errors):
             raise ValueError('Missing role reference; repair the source team explicitly')
-        result = {'team': team, 'role': role, 'instructions': record['body'].get('instructions', '')}
+        result = {'team': team, 'team_revision': record['revision'], 'role': role,
+                  'instructions': record['body'].get('instructions', '')}
         if 'profile' in binding:
             result['profile'] = self.read(binding['profile'])
         else:

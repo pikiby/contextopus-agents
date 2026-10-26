@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from contextopus.core.embeddings import default_config
 from contextopus.core.resources import ProcessResources
+from contextopus.core.operations import OperationInputError
 from contextopus.startup import Application
 
 
@@ -229,10 +230,12 @@ def test_communication_is_not_exposed_or_replayed(app):
     for name in removed:
         with pytest.raises(Exception):
             app.execute('agents.' + name, {})
-    with pytest.raises(Exception, match='profile references only'):
+    with pytest.raises(OperationInputError) as rejected:
         app.execute('agents.record_save', {'record': {'id':'legacy-team','kind':'team',
             'title':'Legacy', 'description':'No session binding',
             'body':{'roles':{'worker':{'session':'old-session'}}}}})
+    assert rejected.value.payload['error']['execution_started'] is False
+    assert not any(row['id'] == 'legacy-team' for row in app.query('agents.list'))
 
 
 def test_record_save_rejects_flat_record_without_creating_it(app):

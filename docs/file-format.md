@@ -56,6 +56,11 @@ documents, dependencies first, with required_revision and an aggregate revision 
 to a required dependency invalidates an older save revision even if the primary is unchanged.
 A missing/ambiguous/cyclic required link is an error. Main-agent rules do not belong in a participant profile.
 
+Workspace owns authoring and binding instructions for its contexts, including agent-work
+rules. Its instructions procedure defines common reuse, direct-link and routing rules.
+Agents manages profiles, teams and its module-wide main instruction; editing that primary
+document does not bind rules to a Workspace context. Agents remains usable without Workspace.
+
 ## Synchronization
 
 Queries read validated current files. The service reconciles complete snapshots into SQL

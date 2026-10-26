@@ -15,8 +15,10 @@ Main-agent rules are shared Core instruction documents referenced by a small
 module file. Reads return the primary prompt once and all required dependencies.
 The combined revision protects edits against changes anywhere in that chain.
 
-Native profile installation is performed procedurally through the host's existing
-facilities. There are no delivery adapters, chat listeners or session operations.
+Native creation, registration and launch are performed by the main agent through
+the host's applicable skills and tools. Registration is not a universal prerequisite;
+the host may support direct profile handoff. Contextopus only manages its own records.
+There are no delivery adapters, chat listeners or session operations.
 Legacy experimental communication tables remain inert for migration compatibility;
 they are not read, replayed or deleted by this release. The original version-one
 migration is retained byte-for-byte so installed roots can update safely.

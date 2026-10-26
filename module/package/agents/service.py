@@ -23,8 +23,13 @@ class Service:
             "profile_delete": self.catalog.delete_profile,
             "catalog_migration_plan": self.migration_plan, "catalog_migrate": self.migrate,
             "read": self.catalog.read, "list": self.list_records,
-            "search": self.catalog.search, "team_resolve": self.catalog.resolve,
+            "search": self.catalog.search, "team_resolve": self.resolve_team,
         }
+
+    def resolve_team(self, team, role):
+        with self.writer:
+            return {**self.catalog.resolve(team, role),
+                    "main_agent_rules": self.instructions.read()}
 
     def start(self):
         try:

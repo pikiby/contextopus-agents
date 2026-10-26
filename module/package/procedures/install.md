@@ -2,12 +2,14 @@
 operations: ["agents.read", "agents.team_resolve"]
 ---
 
-# Manage native profile installations
+# Use a profile through the current environment
 
-This procedure is shared by every host. The main agent performs it using that host's
-existing configuration tools, CLI or editable agent definitions. No permanent sync service
-or host-specific executable adapter is required. Contextopus remains the profile source;
-this procedure does not itself write client files or launch models.
+The main agent chooses the current host's applicable skills and native tools. Read those
+skills before performing the requested native creation, registration or update. Contextopus
+supplies the complete profile and manages only its own records. It does not write client
+files or launch models. Permanent registration is optional: use the host's direct profile
+handoff when supported and appropriate to the request. The checks below apply when the
+chosen host method requires a stored native definition.
 
 ## Select and inspect
 
@@ -28,7 +30,7 @@ this procedure does not itself write client files or launch models.
 ## Ownership and revisions
 
 Use host-provided identity/revision metadata when available. For a dedicated generated
-text file, add a valid native comment containing Contextopus work_root, profile ID,
+text file, add a valid native comment containing the Contextopus profile ID,
 profile revision and SHA-256 of the exact UTF-8 payload after that first comment line.
 This identifies the source and detects local edits without a second profile database.
 Use the host's supported comment syntax, not a foreign field that its loader might reject.
@@ -57,10 +59,11 @@ a file existing on disk is insufficient. Distinguish file installed from host lo
 model execution tested. Request a reload only if needed, preserving ongoing work and the
 user's GUI permission boundary. Never restart unrelated sessions automatically.
 
-Run only the authorized task through the host's native agent launcher by that verified
-name. Do not silently fall back to a generic agent if the installed profile is not visible.
-A user may choose explicit verbatim prompt handoff if no native profile support exists,
-provided required restrictions/settings are supported. After launch check result evidence.
+Run only the authorized task through the host's native launcher. Use a verified registered
+name if that is the selected method, or pass the complete profile verbatim using supported
+direct handoff. The main agent selects the method; do not claim that an unloaded named
+profile was used. Both methods must honor required restrictions and settings. After launch
+check result evidence.
 Existing workers keep their original prompt; updates apply to subsequent loaded launches.
 
 Recheck after profile edits, host configuration/version changes or lost verification.

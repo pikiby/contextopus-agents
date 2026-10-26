@@ -29,17 +29,24 @@ meaningful names. Team profile bindings use Obsidian wikilinks to actual files. 
 edits, moves and deletes are supported; broken links are reported for explicit repair.
 Do not silently rename files or repair references while making an unrelated change.
 
+Profiles may link to existing skill cards and other records with direct Obsidian file
+links. Read the intended targets before saving; do not invent missing cards. Rules for
+a selected Workspace context are authored and bound through Workspace's instructions
+procedure, not by editing a profile or the module-wide main-agent instruction.
+
 A profile has purpose, model/settings and optional executor instructions. A team has role
 bindings to profiles plus optional team instructions. Use descriptions
-that make role selection possible. Main-agent routing/concurrency rules belong in the
-separate instruction edited through agents/instructions, not copied into every profile.
+that make role selection possible. Main-agent routing/concurrency rules belong in their
+separate applicable instruction, not copied into every profile.
 Do not invent a default-team setting. Record updates do not launch participants.
 
-After a requested profile change, use agents/install to reconcile its known installations
-in the selected environments through native tools/configuration. Do not silently update
-other machines or every installed client. Report saved catalog revision separately from
-installed and host-loaded revisions; unavailable targets remain pending. Team membership
-changes do not require rewriting an unchanged executor profile.
+When the request includes native agent creation or an installed profile update, the main
+agent reads the current environment's applicable skills and uses its native tools with the
+saved full profile. Use agents/install for source preservation and conflict checks when
+registration is needed. Saving a catalog record alone does not complete native creation.
+A catalog-only request stops at the catalog. Do not update other hosts or launch an agent
+without a corresponding task. Report saved, installed and host-loaded revisions separately.
+Team membership changes do not require rewriting an unchanged executor profile.
 
 For a requested profile removal, read the current record and call agents.profile_delete
 with id and expected_revision. A blocked result lists team
